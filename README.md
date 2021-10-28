@@ -12,6 +12,10 @@
 
 ## Usage：
 
+##### ※ 使用 pipy 安装所需轮子: 
+
+##### `pip3 install –r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple`
+
 ​	1. 选择底图使用什么
 
 ​	2. 输入名字
