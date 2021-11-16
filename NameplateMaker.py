@@ -71,11 +71,13 @@ def makeNamedImg(input_imgName:str, x1, y1, x2, y2, Tsize):
     try:
         # Save file.
         img180.save('./' + input_imgName + '.png')
+        write_logFile(input_imgName, 1)
         print('''
  -----------------------------------------------
   已生成 {0} 的铭牌，文图片已保存至程序所在目录下。
  -----------------------------------------------'''.format(input_Name))
     except:
+        write_logFile(input_imgName, 2)
         print('''
      ----------------------------------------
       文件保存失败，请检查是否有未关闭的重名文件。
@@ -83,9 +85,10 @@ def makeNamedImg(input_imgName:str, x1, y1, x2, y2, Tsize):
 
 
 # Retry when user input info wrong.
-def tranceUserInputRetry():
+def tranceUserInputRetry(user_input):
     global jumpFlag
     jumpFlag = 0
+    write_logFile(user_input, 0)
     print('''
  -------------------------------------------------------
            ERROR: 用户输入信息无法被解析
@@ -100,11 +103,11 @@ def tranceUserInputRetry():
 def checkUserInput(user_input):
     # retry when inputLen>7 or ''
     if user_input == '':
-        tranceUserInputRetry()
+        tranceUserInputRetry(user_input)
     elif len(user_input) > 7:
-        tranceUserInputRetry()
+        tranceUserInputRetry(user_input)
     elif len(user_input) < 2:
-        tranceUserInputRetry()
+        tranceUserInputRetry(user_input)
 
 
 def tranceUserInput(user_input):
@@ -145,6 +148,27 @@ def seletBGimg():
 \n 请在 2s 后重试。\n''')
             time.sleep(2)
     return bg_img, bg_selet
+
+
+def writeFile(openFile, writeText):
+    with open(openFile, 'a+') as f:
+        f.write(writeText)
+
+
+def write_logFile(loggerName, status: int):
+    # create log File -> log_YYYYMMDD.txt
+    file = ('./log_' + time.strftime("%Y-%m-%d", time.localtime()) + '.txt')
+    # status == 1 -> True; ==0 -> Warn; ==2 -> ERROR.
+    nowTime = time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime())
+    try:
+        if status == 1:
+            writeFile(file, f'{nowTime}    INFO                   [{loggerName}] 的铭牌生成 成功。\n')
+        elif status == 0:
+            writeFile(file, f'{nowTime}    * WARN *            [{loggerName}] 的铭牌生成 失败。\n')
+        elif status == 2:
+            writeFile(file, f'{nowTime}    ## ERROR ##    [{loggerName}] 的铭牌生成 错误，请检查源码。\n')
+    except:
+        writeFile(file, f'## {nowTime} ## ERROR ##    出现错误，[log status type]异常。 ##\n')
 
 
 def shutdown(shutdown_time):
